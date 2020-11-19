@@ -1,8 +1,21 @@
 import Post from '../../models/post'
 import mongoose from 'mongoose'
 import Joi from 'joi'
+import sanitizeHtml from 'sanitize-html'
 
 const { ObjectId } = mongoose.Types
+
+const sanitizeOption = {
+    allowedTags: [
+        'h1', 'h2', 'b', 'i', 'u', 's', 'p', 'ul', 'ol', 'li', 'blockquote', 'a', 'img',
+    ],
+    allowedAttributes: {
+        a: ['href', 'name', 'target'],
+        img: ['src'],
+        li: ['class'],
+    },
+    allowedSchemes: ['data', 'http']
+}
 
 //DB의 ObjectID검증
 //잘못된 ID를 전달했을경우 400Error을 보냄
@@ -70,6 +83,13 @@ export const write = async ctx => {
 GET /api/posts?username=&tag=&page=
 */
 export const list = async ctx => {
+    //html을 없애고 내용이 너무 길면 200자로 제한
+    const removeHtmlAndShorten = body => {
+        const filtered = sanitizeHtml(body, {
+            allowedTags: [],
+        })
+        return filtered.length < 200 ? filtered: `${filtered.slice(0, 200)}...`
+    }
     const page = parseInt(ctx.query.page || '1', 10)
 
     if(page < 1) {
@@ -80,7 +100,7 @@ export const list = async ctx => {
     const { tag, username } = ctx.query
     const query = {
         ...(username ? { 'user.username': username } : {}),
-        ...ctx(tag ? {tags: tag} : {}),
+        ...(tag ? {tags: tag} : {}),
     }
 
     try {
@@ -97,8 +117,7 @@ export const list = async ctx => {
         ctx.body = posts
             .map(post => ({
                 ...post,
-                body:
-                    post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}...`
+                body: removeHtmlAndShorten(post.body),
             }))
     }catch(e) {
         ctx.throw(500,e)
@@ -153,8 +172,14 @@ export const update = async ctx => {
         return
     }
 
+    const nextData = {...ctx.request.body}
+
+    if(nextData.body){
+        nextData.body = sanitizeHtml(nextData.body)
+    }
+
     try {
-        const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+        const post = await Post.findByIdAndUpdate(id, nextData, {
             new: true //업데이트 후의 데이터를 반환
         }).exec()
 

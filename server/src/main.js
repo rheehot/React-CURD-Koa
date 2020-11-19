@@ -4,6 +4,9 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import mongoose from 'mongoose'
 import bodyParser from 'koa-bodyparser'
+import serve from 'koa-static'
+import path from 'path'
+import send from 'koa-send'
 
 import jwtMiddleware from './lib/jwtMiddleware'
 
@@ -32,6 +35,16 @@ app.use(jwtMiddleware)
 
 //app 인스턴스에 라우터 적용
 app.use(router.routes()).use(router.allowedMethods())
+
+const buildDirectory = path.resolve(__dirname, '../../client/build')
+
+app.use(serve(buildDirectory))
+app.use(async ctx => {
+    //Not Found이고, 주소가 /api로 시작하지 않는 경우
+    if(ctx.status === 404 && ctx.path.indexOf('/api') !== 0){
+        await send(ctx, 'index.html', {root: buildDirectory})
+    }
+})
 
 
 const port = PORT || 4000
