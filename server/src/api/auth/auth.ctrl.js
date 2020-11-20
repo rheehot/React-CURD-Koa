@@ -100,7 +100,6 @@ export const login = async ctx => {
     GET /api/auth/check
 */
 export const check = async ctx => {
-    console.log("Hello Test Check")
     const { user } = ctx.state;
     if (!user) {
         //로그인 중 아님

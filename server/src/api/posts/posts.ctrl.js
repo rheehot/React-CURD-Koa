@@ -20,7 +20,7 @@ const sanitizeOption = {
 //DB의 ObjectID검증
 //잘못된 ID를 전달했을경우 400Error을 보냄
 export const getPostById = async (ctx, next) => {
-    const {id } = ctx.params
+    const { id } = ctx.params
     if(!ObjectId.isValid(id)) {
         ctx.status = 400
         return
@@ -39,6 +39,7 @@ export const getPostById = async (ctx, next) => {
     }
 }
 
+//실제 존재하는 유저가 작성한건지 검증
 export const checkOwnPost = (ctx, next) => {
     const { user, post } = ctx.state
     if(post.user._id.toString() !== user._id){
@@ -83,12 +84,12 @@ export const write = async ctx => {
 GET /api/posts?username=&tag=&page=
 */
 export const list = async ctx => {
-    //html을 없애고 내용이 너무 길면 200자로 제한
+    //html을 없애고 내용이 너무 길면 50자로 제한
     const removeHtmlAndShorten = body => {
         const filtered = sanitizeHtml(body, {
             allowedTags: [],
         })
-        return filtered.length < 200 ? filtered: `${filtered.slice(0, 200)}...`
+        return filtered.length < 50 ? filtered: `${filtered.slice(0, 50)}...`
     }
     const page = parseInt(ctx.query.page || '1', 10)
 

@@ -9,7 +9,7 @@ const jwtMiddleware = (ctx, next) => {
             _id: decoded._id,
             username: decoded.username,
         }
-        console.log(decoded)
+        //console.log(decoded)
         return next()
     }catch(e){
         //토큰 검증 실패
