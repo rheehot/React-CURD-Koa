@@ -26,6 +26,12 @@ const CommentContent = styled.div`
     color: ${palette.gray[7]};
  `
 
+ const CommentDescribe = styled.div`
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+ `
+
 const CommentItem = ({ comment }) => {
     const { publishedDate, user, body } = comment
     return (
@@ -46,6 +52,7 @@ const CommentList = ({ comments, loading, error }) => {
             <CommentContent>
                 {!loading && comments && (
                     <div>
+                        <CommentDescribe>{comments.length} 개의 덧글</CommentDescribe>
                         {comments.map(comment => (
                             <CommentItem comment={comment} key={comment._id} />
                         ))}

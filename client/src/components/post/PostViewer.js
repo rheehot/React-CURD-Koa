@@ -7,6 +7,7 @@ import palette from '../../lib/styles/palette'
 import Responsive from '../common/Responsive'
 import SubInfo from '../common/SubInfo'
 import Tags from '../common/Tags'
+import NotFound from '../error/NotFound'
 
  const PostViewerBlock = styled(Responsive)`
     margin-top: 4rem;
@@ -27,14 +28,17 @@ import Tags from '../common/Tags'
     font-size: 1.3125rem;
     color: ${palette.gray[8]};
     border-bottom: 2px solid ${palette.cyan[8]};
+    img {
+        max-width: 50vw;
+    }
  `
 
  const PostViewer = ({post, error, loading, actionButtons}) => {
     if(error){
         if(error.response && error.response.status === 404){
-            return <PostViewerBlock>존재하지 않는 포스트입니다.</PostViewerBlock>
+            return <NotFound></NotFound>
         }
-        return <PostViewerBlock>오류 발생!</PostViewerBlock>
+        return <NotFound errorCode={'400'} errorText={'Bad Request'} message={'잘못된 요청입니다'}>{error}</NotFound>
     }
 
     if(loading || !post) return null

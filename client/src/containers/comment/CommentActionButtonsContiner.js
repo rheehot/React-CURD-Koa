@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import CommentActionButton from '../../components/comment/CommentActionButton'
@@ -16,17 +16,18 @@ const WriteActionButtonsContainer = ({history, match}) => {
         error: comment.error,
         user: user.user
     }))
-
     
     const onPublish = () => {
-        dispatch(commentPost({postId, body}))
+        const checkBody = body
+        checkBody.replace(/<p><br><\/p>/gim, '').trim()
+        if(checkBody || '') dispatch(commentPost({postId, body}))
     }
 
     useEffect(() => {
         if(comment) {
             dispatch(commentsRead(postId))
         }else if(error){
-            console.log(error)
+            //에러가있음
         }
     },[dispatch, comment, error, history, postId])
 

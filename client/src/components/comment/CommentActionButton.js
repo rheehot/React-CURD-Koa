@@ -18,6 +18,8 @@ const StyledButton = styled(Button)`
 	}
 `;
 
+
+
 function CommentActionButton({ onPublish, isLogin }) {
 	return (
 		<CommentActionButtonsContinerBlock>
@@ -26,7 +28,7 @@ function CommentActionButton({ onPublish, isLogin }) {
 					댓글작성
 				</StyledButton> :
 				<StyledButton gray onClick={onPublish} disabled>
-				댓글작성
+					댓글작성
 			</StyledButton>
 			}
 		</CommentActionButtonsContinerBlock>

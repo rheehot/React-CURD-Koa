@@ -40,14 +40,14 @@ import { useSelector } from 'react-redux';
     }))
 
     useEffect(() => {
-        if(comment) return
-        quillInstance.current.root.innerHTML = ''
+        if(comment) return quillInstance.current.root.innerHTML = ''
     },[comment])
 
     return (
         <EditorBlock>
                 <div ref={quillElement}/>
                 <CommentActionButtonsContiner/>
+                
         </EditorBlock>
     )
 }
